@@ -33,7 +33,6 @@ def checkAPI(response):
 def weather():
     locator = Nominatim(user_agent="weatherAPI.py")
     form = LocationForm()
-    print(form.location.data)
 
     if form.validate_on_submit():
         #Get the info and replace city with it
@@ -79,14 +78,5 @@ def weather():
 
     return render_template('weather.html', info = info, form = form)
 
-#urlBuild = 'https://api.api-ninjas.com/v1/geocoding?city=' + city + '&country=' + country
-#open data from api
 if __name__ == "__main__":
-    app.run(debug = True)
-
-
-"""
-NOTE:
-1. Add error screen
-    - I think you can just use flask alerts, 
-"""
+    app.run(debug = False)
