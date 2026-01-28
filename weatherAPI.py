@@ -7,12 +7,12 @@ import requests
 from datetime import datetime
 import calendar
 
-#Saves the location of previous sessions
-city = "New York City"
-country = "New York"
+import os
+
+from models import LocationForm
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '4c27c7fb80966bf0f26f75a3ed9ce0782ebc3ab92e6e6a9b'
+app.config['SECRET_KEY'] = os.getenv("SECRET")
 
 def checkAPI(response):
     if (response.status_code != requests.codes.ok):
@@ -22,30 +22,26 @@ def checkAPI(response):
 @app.route('/weather', methods=['GET','POST'])
 def weather():
     locator = Nominatim(user_agent="weatherAPI.py")
+    form = LocationForm()
+    print(form.location.data)
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         #Get the info and replace city with it
-        city = request.form["cityName"]
-        country = request.form["countryName"]
-
-        stringBuilder = city + ", " + country
-        location = locator.geocode(stringBuilder)
+        givenLocation = form.location.data
+        location = locator.geocode(givenLocation)
 
     else:
         #Replace city with initial placeholder
-        city = "New York City"
-        country = "New York"
-
-        stringBuilder = city + ", " + country
-        location = locator.geocode(stringBuilder)
+        givenLocation = "New York City"
+        location = locator.geocode(givenLocation)
 
     if location is None:
         flash("Inputted location could not be found")
         return redirect(url_for('weather'))
     
+    #This first hashmap is for calling the api
     info = {
-        "city": city,
-        "country": country,
+        "Location": location,
         "lat": round(location.latitude, 2),
         "long": round(location.longitude, 2)
     }
@@ -57,16 +53,9 @@ def weather():
     
     results = json.loads(weather_response.text)
 
-    """
-    #DEBUGGING
-    print(results)
-    #DEBUGGING
-    """
-
-    #This will overwrite the last info hashmap!!!
+    #This second hashmap is for frontend display purposes
     info = {
-        "city": city,
-        "country": country,
+        "Location": givenLocation,
         "date": results.get("daily").get("time"),
         "maxTemp": [round(num,2) for num in results.get("daily").get("apparent_temperature_max")]
     }
@@ -78,7 +67,7 @@ def weather():
     
     info["days"] = days_of_week
 
-    return render_template('weather.html', info = info)
+    return render_template('weather.html', info = info, form = form)
 
 #urlBuild = 'https://api.api-ninjas.com/v1/geocoding?city=' + city + '&country=' + country
 #open data from api

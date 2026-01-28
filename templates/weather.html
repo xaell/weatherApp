@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
   <div id = "home">
-    <h3 id = "locationName">{{info.city}}, {{info.country}}</h3>
+    <h3 id = "locationName">{{info.Location}}</h3>
     <div id = "forecastInfo">
       <div class="container">
         <div class="row">
@@ -53,13 +53,19 @@
         <b><p id = "errorMsg" align = "center">{{ msg }}</p></b>
       {% endfor %}
 
-      <form action = "#" method="post" align = "center">
-        <p id = "countryInput">Country/State name: <input type = "text" name = "countryName"></p>
-        <p id = "cityInput">City/town name: <input type = "text" name = "cityName"></p>
-        <p><input type = "submit" value="submit"></p>
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.location.label }}
+            {{ form.location(size=50) }}
+            {% for error in form.location.errors %}
+                <span style="color:red">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        {{ form.submit() }}
       </form>
+      
     </div> 
   </div>
-  
-
 {% endblock %}
