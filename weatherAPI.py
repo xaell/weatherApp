@@ -1,18 +1,28 @@
 from flask import Flask, render_template, request, url_for, flash, redirect
-
+from flask_limiter import Limiter
 from geopy.geocoders import Nominatim
 import json
 import requests
-
 from datetime import datetime
 import calendar
 
+from dotenv import load_dotenv
 import os
+
+from flask_limiter.util import get_remote_address
 
 from models import LocationForm
 
 app = Flask(__name__)
+
+load_dotenv()
 app.config['SECRET_KEY'] = os.getenv("SECRET")
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["60 per minute"]
+)
 
 def checkAPI(response):
     if (response.status_code != requests.codes.ok):
