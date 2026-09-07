@@ -7,4 +7,4 @@ Recent updates:
 - Replaced raw forms with wtforms to handle validation
 
 APIs:
-- This project uses the Open-Meteo API in order to retrieve weather information and temperature details
+- **This project uses the Open-Meteo API in order to retrieve weather information and temperature details
