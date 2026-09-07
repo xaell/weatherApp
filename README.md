@@ -7,5 +7,4 @@ Recent updates:
 - Replaced raw forms with wtforms to handle validation
 
 APIs:
-- I am using meteo open source weather api to get the temperature
-
+- This project uses the Open-Meteo API in order to retrieve weather information and temperature details
